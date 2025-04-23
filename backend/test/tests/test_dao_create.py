@@ -1,11 +1,9 @@
 import pytest
 import pymongo
-import os
 
-import unittest.mock as mock
 from unittest.mock import patch
 from src.util.dao import DAO
-from dotenv import dotenv_values
+
 
 
 class TestDaoCreate:
