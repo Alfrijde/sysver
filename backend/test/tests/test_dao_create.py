@@ -1,28 +1,34 @@
 import pytest
 import pymongo
+import os
 
 import unittest.mock as mock
 from unittest.mock import patch
 from src.util.dao import DAO
+from dotenv import dotenv_values
 
 
 class TestDaoCreate:
 
     @pytest.fixture
     def sut_user(self):
-        dao = DAO(collection_name="user")
+        dao = DAO(collection_name="user", test_database=True)
         object = dao.create({"firstName": "Test", "lastName": "Testson", "email": "test@test.se"})
-
-        yield dao
-
+        try:
+            yield dao
+        finally:
+            dao.drop()
 
 
     @pytest.fixture
     def sut_video(self):
-        dao = DAO(collection_name="video")
+        dao = DAO(collection_name="video", test_database=True)
         object = dao.create({"url": "https://url.com"})
+        try:
+            yield dao
+        finally:
+            dao.drop()
 
-        yield dao
 
     def test_dao_create_invalid(self, sut_user):
         """
