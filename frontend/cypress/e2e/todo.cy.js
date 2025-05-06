@@ -39,14 +39,14 @@ describe('Managing todos', () => {
   })
 
   it("add a todo with empty title field", () => {
-      cy.get('[id$=title]').clear()
-      cy.get('input[type=submit]').should('be.disabled')
+    cy.get('[id$=title]').clear()
+    cy.get('input[type=submit]').should('be.disabled')
   })
 
   it("add a todo with filled out fields", () => {
-      cy.get('[id$=title]').type(`${uid}`)
-      cy.get('input[type=submit]').click()
-      cy.get('[class=title-overlay]').contains(`${uid}`).should('have.text', `${uid}`)
+    cy.get('[id$=title]').type(`${uid}`)
+    cy.get('input[type=submit]').click()
+    cy.get('[class=title-overlay]').contains(`${uid}`).should('have.text', `${uid}`)
   })
 
   it("strike todo", () => {
@@ -68,6 +68,21 @@ describe('Managing todos', () => {
   })
 
   after(function () {
+    // clean up by deleting all tasks of the user
+    // The url is not working, so no tasks can be deleted at the moment.
+    // cy.request({
+    //   method: 'GET',
+    //   url: `http://localhost:${port}/tasks/ofuser/${uid}`
+    // }).then((response) => {
+    //   cy.log(response.body)
+    //   for (let tasks in response.body) {
+    //     cy.request({
+    //       method: 'DELETE',
+    //       url: `http://localhost:${port}/tasks/byid/${tasks._id}`
+    //     })
+    //   }
+    // })
+
     // clean up by deleting the user from the database
     cy.request({
       method: 'DELETE',
