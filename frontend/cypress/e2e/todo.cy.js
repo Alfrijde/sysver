@@ -1,4 +1,4 @@
-describe('Logging into the system', () => {
+describe('Managing todos', () => {
   // define variables that we need on multiple occasions
   let uid // user id
   let name // name of the user (firstName + ' ' + lastName)
@@ -24,32 +24,47 @@ describe('Logging into the system', () => {
   })
 
   beforeEach(function () {
+    cy.viewport(1280, 1020)
     // enter the main main page
     cy.visit('http://localhost:3000')
-  })
 
-  it('starting out on the landing screen', () => {
-    // make sure the landing page contains a header with "login"
-    cy.get('h1')
-      .should('contain.text', 'Login')
-  })
-
-  it('login to the system with an existing account', () => {
     // detect a div which contains "Email Address", find the input and type (in a declarative way)
     cy.contains('div', 'Email Address')
       .find('input[type=text]')
       .type(email)
-    // alternative, imperative way of detecting that input field
-    //cy.get('.inputwrapper #email')
-    //    .type(email)
 
     // submit the form on this page
     cy.get('form')
       .submit()
+  })
 
-    // assert that the user is now logged in
-    cy.get('h1')
-      .should('contain.text', 'Your tasks, ' + name)
+  it("add a todo with empty title field", () => {
+      cy.get('[id$=title]').clear()
+      cy.get('input[type=submit]').should('be.disabled')
+  })
+
+  it("add a todo with filled out fields", () => {
+      cy.get('[id$=title]').type(`${uid}`)
+      cy.get('input[type=submit]').click()
+      cy.get('[class=title-overlay]').contains(`${uid}`).should('have.text', `${uid}`)
+  })
+
+  it("strike todo", () => {
+    cy.get('[class=title-overlay]').contains(`${uid}`).click()
+    cy.get('.checker.unchecked').click()
+    cy.get('ul li .editable').should('have.css', 'text-decoration', 'line-through solid rgb(49, 46, 46)')
+  })
+
+  it("activate todo", () => {
+    cy.get('[class=title-overlay]').contains(`${uid}`).click()
+    cy.get('.checker.checked').click()
+    cy.get('ul li .editable').should('have.css', 'text-decoration', 'none solid rgb(49, 46, 46)')
+  })
+
+  it("remove todo", () => {
+    cy.get('[class=title-overlay]').contains(`${uid}`).click()
+    cy.get('.remover').click()
+    cy.get('.todo-list').should('have.length', 1)
   })
 
   after(function () {
