@@ -15,16 +15,22 @@ def test_get_user_by_email_valid_unique():
 
     assert result == {"user":"A user"}
 
-def test_get_user_by_email_valid_not_unique():
-    # Test if the function returns one user with a not unique email. Should return the first user in the list.
+def test_get_user_by_email_warning_message(capfd):
+    #Test if the warning message is printed in the console. 
     mockedDAO = mock.MagicMock()
 
-    mockedDAO.find.return_value = [{"user":"Another user"}, {"user":"A user"}]
-
     sut = UserController(dao=mockedDAO)
-
     result = sut.get_user_by_email(email="hi@hello.com")
+    out, err = capfd.readouterr()
 
+    assert out == "Error: more than one user found with mail hi@hello.com\n"
+
+def test_get_user_by_email_not_unique():
+    # Test if the function returns one user with a not unique email. Should return the first user in the list.
+    mockedDAO = mock.MagicMock()
+    mockedDAO.find.return_value = [{"user":"Another user"}, {"user":"A user"}]
+    sut = UserController(dao=mockedDAO)
+    result = sut.get_user_by_email(email="hi@hello.com")
     assert result == {"user":"Another user"}
 
 def test_get_user_by_email_valid_not_in_db():
