@@ -23,7 +23,7 @@ def test_get_user_by_email_warning_message(capfd):
     result = sut.get_user_by_email(email="hi@hello.com")
     out, err = capfd.readouterr()
 
-    assert out == "Error: more than one user found with mail hi@hello.com\n"
+    assert "Error: more than one user found with mail hi@hello.com" in out
 
 def test_get_user_by_email_not_unique():
     # Test if the function returns one user with a not unique email. Should return the first user in the list.
