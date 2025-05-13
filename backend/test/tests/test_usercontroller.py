@@ -18,6 +18,7 @@ def test_get_user_by_email_valid_unique():
 def test_get_user_by_email_warning_message(capfd):
     #Test if the warning message is printed in the console. 
     mockedDAO = mock.MagicMock()
+    mockedDAO.find.return_value = [{"user":"Another user"}, {"user":"A user"}]
 
     sut = UserController(dao=mockedDAO)
     result = sut.get_user_by_email(email="hi@hello.com")
@@ -55,6 +56,7 @@ def test_get_user_by_email_invalid_email():
         sut = UserController(dao=mockedDAO)
 
         result = sut.get_user_by_email(email="hello.com")
+    
 
 def test_get_user_by_email_db_fail():
     # Test an Exception is raised if the database fails
