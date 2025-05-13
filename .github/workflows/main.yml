@@ -25,7 +25,7 @@ jobs:
 
     - name: Unit tests
       run:
-        pytest tests/test_usercontroller.py
+        pytest test_usercontroller.py
       working-directory: backend/test/tests
       
         
