@@ -26,6 +26,7 @@ jobs:
     - name: Unit tests
       run:
         python3 -m pytest -m backend/test/tests
+      working-directory: backend/test/tests
       
         
       
