@@ -24,6 +24,7 @@ class TaskController(Controller):
             KeyError -- in case an important key is missing in the data dict
             Exception -- in case any database operation fails
         """
+        print("second data")
         print(data)
         # store the userid
         if 'userid' not in data:
@@ -31,7 +32,7 @@ class TaskController(Controller):
         uid = data['userid']
         del data['userid']
 
-        
+        print(uid)
         # fill default values for missing values
         if 'startdate' not in data:
             data['startdate'] = datetime.today()
@@ -40,6 +41,8 @@ class TaskController(Controller):
 
         try:
             # add the video url
+            print(data['url'])
+
             video = self.videos_dao.create({'url': data['url']})
             del data['url']
             data['video'] = ObjectId(video['_id']['$oid'])

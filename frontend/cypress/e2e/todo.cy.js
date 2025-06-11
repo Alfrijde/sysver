@@ -198,31 +198,30 @@ describe('R8UC3', () => {
             body: {
               userid: `${uid}`,
               url: "xx1_Ots1Vss&list=PLKtP9l5q3ce8Z-Dt9_H7XmFo2diu1ic4c",
+              description: "This is a test task",
               title: "New task",
               todos: 'Watch video'
             }
           }).then((response) => {
-            taskid = response.body._id.$oid
+            console.log(response.body)
+            taskid = response.body[0]._id.$oid
+            cy.request({
+              method: 'POST',
+              url: `http://localhost:${port}/todos/create`,
+              form: true,
+              body: {
+                "taskid": taskid,
+                "description": "new todo",
+                "done": false
+              }
+            }).then((response) => {
+
+            })
+
+
           })
         })
       })
-
-
-
-
-    cy.request({
-      method: 'POST',
-      url: `http://localhost:${port}/todos/create`,
-      form: true,
-      body: {
-        "taskid": taskid,
-        "description": "new todo",
-        "done": false
-      }
-    }).then((response) => {
-      taskid = response.body._id.$oid
-    })
-
   })
 
   before(function () {
@@ -245,13 +244,13 @@ describe('R8UC3', () => {
     cy.get('[id$=title]').type(`${uid}`)
     cy.get('input[type=submit]').click()
 
-    // cy.get('[class=title-overlay]').contains(`${uid}`).click()
+    cy.get('[class=title-overlay]').contains('This is a test task').click()
     // cy.get('[class=inline-form]').type("new todo")
     // cy.get('[class=inline-form]')
     //   .submit()
 
-    cy.get('[class=close-btn').click()
-    cy.get('[class=title-overlay]').contains(`${uid}`).click()
+    // cy.get('[class=close-btn').click()
+    // cy.get('[class=title-overlay]').contains('This is a test task').click()
   })
 
   // Add test set up with task and todo 

@@ -18,6 +18,7 @@ task_blueprint = Blueprint('task_blueprint', __name__)
 def create():
     try:
         data = request.form.to_dict(flat=False)
+        print("first data")
         print(data)
         userid = data['userid'][0]
         # convert all non-array fields back to simple values
