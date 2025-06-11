@@ -190,40 +190,39 @@ describe('R8UC3', () => {
           uid = response.body._id.$oid
           name = user.firstName + ' ' + user.lastName
           email = user.email
+
+          cy.request({
+            method: 'POST',
+            url: `http://localhost:${port}/tasks/create`,
+            form: true,
+            body: {
+              userid: `${uid}`,
+              url: "xx1_Ots1Vss&list=PLKtP9l5q3ce8Z-Dt9_H7XmFo2diu1ic4c",
+              title: "New task",
+              todos: 'Watch video'
+            }
+          }).then((response) => {
+            taskid = response.body._id.$oid
+          })
         })
       })
 
-    // cy.fixture('task.json')
-    //   .then((task) => {
-    //     cy.request({
-    //       method: 'POST',
-    //       url: `http://localhost:${port}/tasks/create`,
-    //       form: true,
-    //       body: {
-    //         "userid": uid,
-    //         "url": "www.youtube.com",
-    //         "title": "New task"
-    //       }
-    //     }).then((response) => {
-    //       taskid = response.body._id.$oid
-    //     })
-    //   })
 
-    // cy.fixture('todo.json')
-    //   .then((todo) => {
-    //     cy.request({
-    //       method: 'POST',
-    //       url: `http://localhost:${port}/todos/create`,
-    //       form: true,
-    //       body: {
-    //         "taskid": taskid,
-    //         "description": "new todo",
-    //         "done": false
-    //       }
-    //     }).then((response) => {
-    //       taskid = response.body._id.$oid
-    //     })
-    //   })
+
+
+    cy.request({
+      method: 'POST',
+      url: `http://localhost:${port}/todos/create`,
+      form: true,
+      body: {
+        "taskid": taskid,
+        "description": "new todo",
+        "done": false
+      }
+    }).then((response) => {
+      taskid = response.body._id.$oid
+    })
+
   })
 
   before(function () {
@@ -246,10 +245,10 @@ describe('R8UC3', () => {
     cy.get('[id$=title]').type(`${uid}`)
     cy.get('input[type=submit]').click()
 
-    cy.get('[class=title-overlay]').contains(`${uid}`).click()
-    cy.get('[class=inline-form]').type("new todo")
-    cy.get('[class=inline-form]')
-      .submit()
+    // cy.get('[class=title-overlay]').contains(`${uid}`).click()
+    // cy.get('[class=inline-form]').type("new todo")
+    // cy.get('[class=inline-form]')
+    //   .submit()
 
     cy.get('[class=close-btn').click()
     cy.get('[class=title-overlay]').contains(`${uid}`).click()

@@ -46,6 +46,7 @@ class TaskController(Controller):
 
             # create and add todos
             todos = []
+            print(data['todos'])
             for todo in data['todos']:
                 todoobj = self.todos_dao.create({'description': todo, 'done': False})
                 todos.append(ObjectId(todoobj['_id']['$oid']))
