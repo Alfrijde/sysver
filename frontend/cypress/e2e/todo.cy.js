@@ -199,7 +199,7 @@ describe('R8UC3', () => {
               userid: `${uid}`,
               url: "xx1_Ots1Vss&list=PLKtP9l5q3ce8Z-Dt9_H7XmFo2diu1ic4c",
               description: "This is a test task",
-              title: "New task",
+              title: `${uid}`,
               todos: 'Watch video'
             }
           }).then((response) => {
@@ -244,7 +244,7 @@ describe('R8UC3', () => {
     cy.get('[id$=title]').type(`${uid}`)
     cy.get('input[type=submit]').click()
 
-    cy.get('[class=title-overlay]').contains('This is a test task').click()
+    cy.get('[class=title-overlay]').contains(`${uid}`).click()
     // cy.get('[class=inline-form]').type("new todo")
     // cy.get('[class=inline-form]')
     //   .submit()
