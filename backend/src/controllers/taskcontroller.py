@@ -24,7 +24,7 @@ class TaskController(Controller):
             KeyError -- in case an important key is missing in the data dict
             Exception -- in case any database operation fails
         """
-
+        print(data)
         # store the userid
         if 'userid' not in data:
             raise KeyError('When creating a task object, the userid of the associated user must be given')

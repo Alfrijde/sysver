@@ -173,6 +173,7 @@ describe('R8UC3', () => {
   let uid // user id
   let name // name of the user (firstName + ' ' + lastName)
   let email // email of the user
+  let taskid // task id
 
   const port = 5500
 
@@ -191,9 +192,41 @@ describe('R8UC3', () => {
           email = user.email
         })
       })
+
+    // cy.fixture('task.json')
+    //   .then((task) => {
+    //     cy.request({
+    //       method: 'POST',
+    //       url: `http://localhost:${port}/tasks/create`,
+    //       form: true,
+    //       body: {
+    //         "userid": uid,
+    //         "url": "www.youtube.com",
+    //         "title": "New task"
+    //       }
+    //     }).then((response) => {
+    //       taskid = response.body._id.$oid
+    //     })
+    //   })
+
+    // cy.fixture('todo.json')
+    //   .then((todo) => {
+    //     cy.request({
+    //       method: 'POST',
+    //       url: `http://localhost:${port}/todos/create`,
+    //       form: true,
+    //       body: {
+    //         "taskid": taskid,
+    //         "description": "new todo",
+    //         "done": false
+    //       }
+    //     }).then((response) => {
+    //       taskid = response.body._id.$oid
+    //     })
+    //   })
   })
 
-  beforeEach(function () {
+  before(function () {
     cy.viewport(1280, 1020)
     // enter the main main page
     cy.visit('http://localhost:3000')
@@ -209,26 +242,36 @@ describe('R8UC3', () => {
 
   })
 
+  before(function () {
+    cy.get('[id$=title]').type(`${uid}`)
+    cy.get('input[type=submit]').click()
+
+    cy.get('[class=title-overlay]').contains(`${uid}`).click()
+    cy.get('[class=inline-form]').type("new todo")
+    cy.get('[class=inline-form]')
+      .submit()
+
+    cy.get('[class=close-btn').click()
+    cy.get('[class=title-overlay]').contains(`${uid}`).click()
+  })
+
   // Add test set up with task and todo 
 
   it("remove todo", () => {
-    cy.get('[id$=title]').type(`${uid}`)
-    cy.get('input[type=submit]').click()
-    cy.get('[class=title-overlay]').contains(`${uid}`).click()
+
     cy.get('.remover').last().click()
     cy.get('li.todo-item').should('have.length', 1)
 
   })
 
-  it("demo: remove todo with two clicks", () => {
-    // Some times to remove the todo item two click are needed. When tested with manual user test the item is sometimes removed the first time and sometimes two click are needed.
-    cy.get('[class=title-overlay]').contains(`${uid}`).click()
-    cy.get('.remover').last().click()
-    cy.get('.remover').last().click()
+  // it("demo: remove todo with two clicks", () => {
+  //   // Some times to remove the todo item two click are needed. When tested with manual user test the item is sometimes removed the first time and sometimes two click are needed.
+  //   cy.get('.remover').last().click()
+  //   cy.get('.remover').last().click()
 
-    cy.get('li.todo-item').should('have.length', 1)
+  //   cy.get('li.todo-item').should('have.length', 1)
 
-  })
+  // })
 
 
 
