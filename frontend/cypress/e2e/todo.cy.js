@@ -1,302 +1,290 @@
-describe('R8UC1', () => {
-  // define variables that we need on multiple occasions
-  let uid // user id
-  let name // name of the user (firstName + ' ' + lastName)
-  let email // email of the user
+describe("R8UC1", () => {
+	// define variables that we need on multiple occasions
+	let uid; // user id
+	let name; // name of the user (firstName + ' ' + lastName)
+	let email; // email of the user
 
-  const port = 5500
+	const port = 5500;
 
-  before(function () {
-    // create a fabricated user from a fixture
-    cy.fixture('user.json')
-      .then((user) => {
-        cy.request({
-          method: 'POST',
-          url: `http://localhost:${port}/users/create`,
-          form: true,
-          body: user
-        }).then((response) => {
-          uid = response.body._id.$oid
-          name = user.firstName + ' ' + user.lastName
-          email = user.email
-        })
-      })
-  })
+	before(function () {
+		// create a fabricated user from a fixture
+		cy.fixture("user.json").then((user) => {
+			cy.request({
+				method: "POST",
+				url: `http://localhost:${port}/users/create`,
+				form: true,
+				body: user,
+			}).then((response) => {
+				uid = response.body._id.$oid;
+				name = user.firstName + " " + user.lastName;
+				email = user.email;
+				cy.request({
+					method: "POST",
+					url: `http://localhost:${port}/tasks/create`,
+					form: true,
+					body: {
+						userid: `${uid}`,
+						url: "xx1_Ots1Vss&list=PLKtP9l5q3ce8Z-Dt9_H7XmFo2diu1ic4c",
+						description: "This is a test task",
+						title: `${uid}`,
+						todos: "Watch video",
+					},
+				});
+			});
+		});
+	});
 
-  beforeEach(function () {
-    cy.viewport(1280, 1020)
-    // enter the main main page
-    cy.visit('http://localhost:3000')
+	beforeEach(function () {
+		cy.viewport(1280, 1020);
+		// enter the main main page
+		cy.visit("http://localhost:3000");
 
-    // detect a div which contains "Email Address", find the input and type (in a declarative way)
-    cy.contains('div', 'Email Address')
-      .find('input[type=text]')
-      .type(email)
+		// detect a div which contains "Email Address", find the input and type (in a declarative way)
+		cy.contains("div", "Email Address").find("input[type=text]").type(email);
 
-    // submit the form on this page
-    cy.get('form')
-      .submit()
+		// submit the form on this page
+		cy.get("form").submit();
+	});
 
-  })
+	it("add todo", () => {
+		cy.get("[class=title-overlay]").contains(`${uid}`).click();
+		cy.get("[class=inline-form]").type("new todo");
+		cy.get("[class=inline-form]").submit();
 
+		cy.get("li.todo-item").should("have.length", 2);
+	});
 
-  it("add todo", () => {
-    cy.get('[id$=title]').type(`${uid}`)
-    cy.get('input[type=submit]').click()
-    cy.get('[class=title-overlay]').contains(`${uid}`).click()
-    cy.get('[class=inline-form]').type("new todo")
-    cy.get('[class=inline-form]')
-      .submit()
+	it("add todo with empty field", () => {
+		cy.get("[class=title-overlay]").contains(`${uid}`).click();
+		cy.contains("Add").should("be.disabled");
+	});
 
-    cy.get('li.todo-item').should('have.length', 2)
-  })
+	after(function () {
+		// clean up by deleting all tasks of the user
+		// The url is not working, so no tasks can be deleted at the moment.
+		// cy.request({
+		//   method: 'GET',
+		//   url: `http://localhost:${port}/tasks/ofuser/${uid}`
+		// }).then((response) => {
+		//   cy.log(response.body)
+		//   for (let tasks in response.body) {
+		//     cy.request({
+		//       method: 'DELETE',
+		//       url: `http://localhost:${port}/tasks/byid/${tasks._id}`
+		//     })
+		//   }
+		// })
 
-  it("add todo with empty field", () => {
+		// clean up by deleting the user from the database
+		cy.request({
+			method: "DELETE",
+			url: `http://localhost:${port}/users/${uid}`,
+		}).then((response) => {
+			cy.log(response.body);
+		});
+	});
+});
 
-    cy.get('[class=title-overlay]').contains(`${uid}`).click()
-    cy.contains('Add').should('be.disabled')
+describe("R8UC2", () => {
+	// define variables that we need on multiple occasions
+	let uid; // user id
+	let name; // name of the user (firstName + ' ' + lastName)
+	let email; // email of the user
 
-  })
+	const port = 5500;
 
+	before(function () {
+		// create a fabricated user from a fixture
+		cy.fixture("user.json").then((user) => {
+			cy.request({
+				method: "POST",
+				url: `http://localhost:${port}/users/create`,
+				form: true,
+				body: user,
+			}).then((response) => {
+				uid = response.body._id.$oid;
+				name = user.firstName + " " + user.lastName;
+				email = user.email;
+				cy.request({
+					method: "POST",
+					url: `http://localhost:${port}/tasks/create`,
+					form: true,
+					body: {
+						userid: `${uid}`,
+						url: "xx1_Ots1Vss&list=PLKtP9l5q3ce8Z-Dt9_H7XmFo2diu1ic4c",
+						description: "This is a test task",
+						title: `${uid}`,
+						todos: "Watch video",
+					},
+				});
+			});
+		});
+	});
 
-  after(function () {
-    // clean up by deleting all tasks of the user
-    // The url is not working, so no tasks can be deleted at the moment.
-    // cy.request({
-    //   method: 'GET',
-    //   url: `http://localhost:${port}/tasks/ofuser/${uid}`
-    // }).then((response) => {
-    //   cy.log(response.body)
-    //   for (let tasks in response.body) {
-    //     cy.request({
-    //       method: 'DELETE',
-    //       url: `http://localhost:${port}/tasks/byid/${tasks._id}`
-    //     })
-    //   }
-    // })
+	beforeEach(function () {
+		cy.viewport(1280, 1020);
+		// enter the main main page
+		cy.visit("http://localhost:3000");
 
-    // clean up by deleting the user from the database
-    cy.request({
-      method: 'DELETE',
-      url: `http://localhost:${port}/users/${uid}`
-    }).then((response) => {
-      cy.log(response.body)
-    })
-  })
-})
+		// detect a div which contains "Email Address", find the input and type (in a declarative way)
+		cy.contains("div", "Email Address").find("input[type=text]").type(email);
 
-describe('R8UC2', () => {
-  // define variables that we need on multiple occasions
-  let uid // user id
-  let name // name of the user (firstName + ' ' + lastName)
-  let email // email of the user
+		// submit the form on this page
+		cy.get("form").submit();
+	});
 
-  const port = 5500
+	it("strike todo", () => {
+		cy.get("[class=title-overlay]").contains(`${uid}`).click();
 
-  before(function () {
-    // create a fabricated user from a fixture
-    cy.fixture('user.json')
-      .then((user) => {
-        cy.request({
-          method: 'POST',
-          url: `http://localhost:${port}/users/create`,
-          form: true,
-          body: user
-        }).then((response) => {
-          uid = response.body._id.$oid
-          name = user.firstName + ' ' + user.lastName
-          email = user.email
-        })
-      })
-  })
+		cy.get(".checker").first().click();
+		// Assert that the css property is changed to line through
+		cy.get("ul li .editable")
+			.first()
+			.should("have.css", "text-decoration", "line-through solid rgb(49, 46, 46)");
+	});
 
-  beforeEach(function () {
-    cy.viewport(1280, 1020)
-    // enter the main main page
-    cy.visit('http://localhost:3000')
+	it("activate todo", () => {
+		cy.get("[class=title-overlay]").contains(`${uid}`).click();
+		cy.get(".checker").first().click();
+		cy.get("ul li .editable")
+			.first()
+			.should("have.css", "text-decoration", "none solid rgb(49, 46, 46)");
+	});
 
-    // detect a div which contains "Email Address", find the input and type (in a declarative way)
-    cy.contains('div', 'Email Address')
-      .find('input[type=text]')
-      .type(email)
+	after(function () {
+		// clean up by deleting all tasks of the user
+		// The url is not working, so no tasks can be deleted at the moment.
+		// cy.request({
+		//   method: 'GET',
+		//   url: `http://localhost:${port}/tasks/ofuser/${uid}`
+		// }).then((response) => {
+		//   cy.log(response.body)
+		//   for (let tasks in response.body) {
+		//     cy.request({
+		//       method: 'DELETE',
+		//       url: `http://localhost:${port}/tasks/byid/${tasks._id}`
+		//     })
+		//   }
+		// })
 
-    // submit the form on this page
-    cy.get('form')
-      .submit()
+		// clean up by deleting the user from the database
+		cy.request({
+			method: "DELETE",
+			url: `http://localhost:${port}/users/${uid}`,
+		}).then((response) => {
+			cy.log(response.body);
+		});
+	});
+});
 
-  })
+describe("R8UC3", () => {
+	// define variables that we need on multiple occasions
+	let uid; // user id
+	let name; // name of the user (firstName + ' ' + lastName)
+	let email; // email of the user
+	let taskid; // task id
 
-  it("strike todo", () => {
-    cy.get('[id$=title]').type(`${uid}`)
-    cy.get('input[type=submit]').click()
-    cy.get('[class=title-overlay]').contains(`${uid}`).click()
+	const port = 5500;
 
-    cy.get('.checker').first().click()
-    // Assert that the css property is changed to line thorough
-    cy.get('ul li .editable').first().should('have.css', 'text-decoration', 'line-through solid rgb(49, 46, 46)')
-  })
+	before(function () {
+		// create a fabricated user from a fixture
+		cy.fixture("user.json").then((user) => {
+			cy.request({
+				method: "POST",
+				url: `http://localhost:${port}/users/create`,
+				form: true,
+				body: user,
+			}).then((response) => {
+				uid = response.body._id.$oid;
+				name = user.firstName + " " + user.lastName;
+				email = user.email;
 
-  it("activate todo", () => {
-    cy.get('[class=title-overlay]').contains(`${uid}`).click()
-    cy.get('.checker').first().click()
-    cy.get('ul li .editable').first().should('have.css', 'text-decoration', 'none solid rgb(49, 46, 46)')
-  })
+				cy.request({
+					method: "POST",
+					url: `http://localhost:${port}/tasks/create`,
+					form: true,
+					body: {
+						userid: `${uid}`,
+						url: "xx1_Ots1Vss&list=PLKtP9l5q3ce8Z-Dt9_H7XmFo2diu1ic4c",
+						description: "This is a test task",
+						title: `${uid}`,
+						todos: "Watch video",
+					},
+				}).then((response) => {
+					console.log(response.body);
+					taskid = response.body[0]._id.$oid;
+					cy.request({
+						method: "POST",
+						url: `http://localhost:${port}/todos/create`,
+						form: true,
+						body: {
+							taskid: taskid,
+							description: "new todo",
+							done: false,
+						},
+					}).then((response) => {});
+				});
+			});
+		});
+	});
 
-  after(function () {
-    // clean up by deleting all tasks of the user
-    // The url is not working, so no tasks can be deleted at the moment.
-    // cy.request({
-    //   method: 'GET',
-    //   url: `http://localhost:${port}/tasks/ofuser/${uid}`
-    // }).then((response) => {
-    //   cy.log(response.body)
-    //   for (let tasks in response.body) {
-    //     cy.request({
-    //       method: 'DELETE',
-    //       url: `http://localhost:${port}/tasks/byid/${tasks._id}`
-    //     })
-    //   }
-    // })
+	before(function () {
+		cy.viewport(1280, 1020);
+		// enter the main main page
+		cy.visit("http://localhost:3000");
 
-    // clean up by deleting the user from the database
-    cy.request({
-      method: 'DELETE',
-      url: `http://localhost:${port}/users/${uid}`
-    }).then((response) => {
-      cy.log(response.body)
-    })
-  })
-})
+		// detect a div which contains "Email Address", find the input and type (in a declarative way)
+		cy.contains("div", "Email Address").find("input[type=text]").type(email);
 
-describe('R8UC3', () => {
-  // define variables that we need on multiple occasions
-  let uid // user id
-  let name // name of the user (firstName + ' ' + lastName)
-  let email // email of the user
-  let taskid // task id
+		// submit the form on this page
+		cy.get("form").submit();
+	});
 
-  const port = 5500
+	before(function () {
+		cy.get("[id$=title]").type(`${uid}`);
+		cy.get("input[type=submit]").click();
 
-  before(function () {
-    // create a fabricated user from a fixture
-    cy.fixture('user.json')
-      .then((user) => {
-        cy.request({
-          method: 'POST',
-          url: `http://localhost:${port}/users/create`,
-          form: true,
-          body: user
-        }).then((response) => {
-          uid = response.body._id.$oid
-          name = user.firstName + ' ' + user.lastName
-          email = user.email
+		cy.get("[class=title-overlay]").contains(`${uid}`).click();
+	});
 
-          cy.request({
-            method: 'POST',
-            url: `http://localhost:${port}/tasks/create`,
-            form: true,
-            body: {
-              userid: `${uid}`,
-              url: "xx1_Ots1Vss&list=PLKtP9l5q3ce8Z-Dt9_H7XmFo2diu1ic4c",
-              description: "This is a test task",
-              title: `${uid}`,
-              todos: 'Watch video'
-            }
-          }).then((response) => {
-            console.log(response.body)
-            taskid = response.body[0]._id.$oid
-            cy.request({
-              method: 'POST',
-              url: `http://localhost:${port}/todos/create`,
-              form: true,
-              body: {
-                "taskid": taskid,
-                "description": "new todo",
-                "done": false
-              }
-            }).then((response) => {
+	// Add test set up with task and todo
 
-            })
+	it("remove todo", () => {
+		cy.get(".remover").last().click();
+		cy.get("li.todo-item").should("have.length", 1);
+	});
 
+	// it("demo: remove todo with two clicks", () => {
+	// Sometimes the UI is not updated when clicking once on the remover button (even though the DELETE request goes through), causing the test to fail. This commented out test demonstrates that clicking the remover button twice updates the UI.
+	//   cy.get('.remover').last().click()
+	//   cy.get('.remover').last().click()
 
-          })
-        })
-      })
-  })
+	//   cy.get('li.todo-item').should('have.length', 1)
 
-  before(function () {
-    cy.viewport(1280, 1020)
-    // enter the main main page
-    cy.visit('http://localhost:3000')
+	// })
 
-    // detect a div which contains "Email Address", find the input and type (in a declarative way)
-    cy.contains('div', 'Email Address')
-      .find('input[type=text]')
-      .type(email)
+	after(function () {
+		// clean up by deleting all tasks of the user
+		// The url is not working, so no tasks can be deleted at the moment.
+		// cy.request({
+		//   method: 'GET',
+		//   url: `http://localhost:${port}/tasks/ofuser/${uid}`
+		// }).then((response) => {
+		//   cy.log(response.body)
+		//   for (let tasks in response.body) {
+		//     cy.request({
+		//       method: 'DELETE',
+		//       url: `http://localhost:${port}/tasks/byid/${tasks._id}`
+		//     })
+		//   }
+		// })
 
-    // submit the form on this page
-    cy.get('form')
-      .submit()
-
-  })
-
-  before(function () {
-    cy.get('[id$=title]').type(`${uid}`)
-    cy.get('input[type=submit]').click()
-
-    cy.get('[class=title-overlay]').contains(`${uid}`).click()
-    // cy.get('[class=inline-form]').type("new todo")
-    // cy.get('[class=inline-form]')
-    //   .submit()
-
-    // cy.get('[class=close-btn').click()
-    // cy.get('[class=title-overlay]').contains('This is a test task').click()
-  })
-
-  // Add test set up with task and todo 
-
-  it("remove todo", () => {
-
-    cy.get('.remover').last().click()
-    cy.get('li.todo-item').should('have.length', 1)
-
-  })
-
-  // it("demo: remove todo with two clicks", () => {
-  //   // Some times to remove the todo item two click are needed. When tested with manual user test the item is sometimes removed the first time and sometimes two click are needed.
-  //   cy.get('.remover').last().click()
-  //   cy.get('.remover').last().click()
-
-  //   cy.get('li.todo-item').should('have.length', 1)
-
-  // })
-
-
-
-
-
-  after(function () {
-    // clean up by deleting all tasks of the user
-    // The url is not working, so no tasks can be deleted at the moment.
-    // cy.request({
-    //   method: 'GET',
-    //   url: `http://localhost:${port}/tasks/ofuser/${uid}`
-    // }).then((response) => {
-    //   cy.log(response.body)
-    //   for (let tasks in response.body) {
-    //     cy.request({
-    //       method: 'DELETE',
-    //       url: `http://localhost:${port}/tasks/byid/${tasks._id}`
-    //     })
-    //   }
-    // })
-
-    // clean up by deleting the user from the database
-    cy.request({
-      method: 'DELETE',
-      url: `http://localhost:${port}/users/${uid}`
-    }).then((response) => {
-      cy.log(response.body)
-    })
-  })
-})
+		// clean up by deleting the user from the database
+		cy.request({
+			method: "DELETE",
+			url: `http://localhost:${port}/users/${uid}`,
+		}).then((response) => {
+			cy.log(response.body);
+		});
+	});
+});
